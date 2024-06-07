@@ -1,6 +1,8 @@
 import * as express from "express"
 import { AppDataSource } from "./data-source"
 import { UserRouter } from "./routes/UserRoute"
+import { ActivityRouter } from "./routes/ActivityRoute"
+import { ProjectRouter } from "./routes/ProjectRoute"
 
 const cors = require("cors")
 const port = 5000
@@ -12,6 +14,8 @@ AppDataSource.initialize()
     app.use(cors())
 
     app.use("/api/v1", UserRouter)
+    app.use("/api/v1", ActivityRouter)
+    app.use("/api/v1", ProjectRouter)
 
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`)

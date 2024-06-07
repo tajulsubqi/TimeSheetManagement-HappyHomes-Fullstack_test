@@ -1,13 +1,14 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm"
-import { UserEntity } from "./User"
 import { ProjectEntity } from "./Project"
+import { UserEntity } from "./User"
 
 @Entity({ name: "activities" })
 export class ActivityEntity {
@@ -15,32 +16,37 @@ export class ActivityEntity {
   id: number
 
   @Column()
-  activity_title: string
+  activityTitle: string
 
   @Column()
-  start_date: Date
+  startDate: Date
 
   @Column()
-  end_date: Date
+  endDate: Date
 
-  @Column()
-  start_time: Date
+  @Column({ type: "varchar" })
+  startTime: string
 
-  @Column()
-  end_time: Date
+  @Column({ type: "varchar" })
+  endTime: string
 
-  @Column()
+  @Column({ type: "int", default: 0 })
   duration: number
 
+  @Column({ type: "int", default: 0 })
+  totalIncome: number
+
   @CreateDateColumn()
-  created_at: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  updated_at: Date
+  updatedAt: Date
 
-  @ManyToOne(() => ProjectEntity, (project) => project.id)
+  @ManyToOne(() => ProjectEntity, (project) => project.activities)
+  @JoinColumn({ name: "project_id" })
   proyek: ProjectEntity
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.activities)
+  @JoinColumn({ name: "user_id" })
   user: UserEntity
 }

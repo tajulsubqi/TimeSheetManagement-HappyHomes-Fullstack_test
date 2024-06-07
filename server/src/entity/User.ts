@@ -1,10 +1,10 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm"
 import { ActivityEntity } from "./Activity"
 
@@ -17,16 +17,14 @@ export class UserEntity {
   name: string
 
   @Column()
-  rate: number
+  hourlyRate: number // Rate per hour
 
   @CreateDateColumn()
-  created_at: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  updated_at: Date
+  updatedAt: Date
 
-  @OneToMany(() => ActivityEntity, (activity) => activity.id, {
-    onDelete: "CASCADE",
-  })
-  activity: ActivityEntity
+  @OneToMany(() => ActivityEntity, (activity) => activity.user)
+  activities: ActivityEntity[]
 }

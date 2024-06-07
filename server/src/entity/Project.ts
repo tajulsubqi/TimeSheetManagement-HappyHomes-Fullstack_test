@@ -1,27 +1,27 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm"
 import { ActivityEntity } from "./Activity"
 
-@Entity({ name: "project" })
+@Entity({ name: "projects" })
 export class ProjectEntity {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column()
-  name_project: string
+  projectName: string
 
   @CreateDateColumn()
-  created_at: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  updated_at: Date
+  updatedAt: Date
 
-  @OneToMany(() => ActivityEntity, (activity) => activity.id)
-  activity: ActivityEntity
+  @OneToMany(() => ActivityEntity, (activity) => activity.proyek)
+  activities: ActivityEntity[]
 }
