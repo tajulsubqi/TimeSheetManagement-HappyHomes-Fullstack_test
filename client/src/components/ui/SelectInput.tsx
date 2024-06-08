@@ -44,7 +44,7 @@ interface SelectInputProps {
 const SelectInput = ({ onChange, value, name }: SelectInputProps) => {
   const [open, setOpen] = useState(false)
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["projects"],
     queryFn: () => {
       const token = localStorage.getItem("token")

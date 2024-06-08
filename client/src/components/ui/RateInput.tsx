@@ -5,9 +5,10 @@ interface Props {
   name: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   value?: string
+  disabled?: boolean
 }
 
-const RateInput = ({ label, name, onChange, value }: Props) => {
+const RateInput = ({ label, name, onChange, value, disabled }: Props) => {
   return (
     <div>
       <label className="text-sm font-semibold text-slate-600" htmlFor="">
@@ -17,6 +18,7 @@ const RateInput = ({ label, name, onChange, value }: Props) => {
         <span className="absolute left-3 text-slate-400">Rp</span>
         <input
           onChange={onChange}
+          disabled={disabled}
           value={value}
           name={name}
           type="number"

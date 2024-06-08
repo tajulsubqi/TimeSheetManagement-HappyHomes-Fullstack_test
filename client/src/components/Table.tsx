@@ -1,61 +1,33 @@
-import { useState } from "react"
-import { CiEdit } from "react-icons/ci"
-import { MdDeleteOutline } from "react-icons/md"
-import DeleteActivityModal from "./modal-activity/DeleteActivityModal"
-import EditActivityModal from "./modal-activity/EditActivityModal"
-import { useQuery } from "@tanstack/react-query"
-import { Api } from "@/libs/axiosInstance"
+"use client"
+import { IActivity } from "@/interface/IActivity"
+import { formatToRupiah } from "@/utils/currencyFormatter"
 import {
   calculateDuration,
   formatDate,
   formatMsToDaysHoursMinutes,
 } from "@/utils/timeConversion"
-import { formatToRupiah } from "@/utils/currencyFormatter"
-import { IActivity } from "@/interface/IActivity"
+import { CiEdit } from "react-icons/ci"
+import { MdDeleteOutline } from "react-icons/md"
+import DeleteActivityModal from "./modal-activity/DeleteActivityModal"
+import EditActivityModal from "./modal-activity/EditActivityModal"
+import { IPropsTable } from "@/interface/ITable"
+import { FaFilter } from "react-icons/fa"
+import { TiFilter } from "react-icons/ti"
 
-const Table = () => {
-  const [openDelete, setOpenDelete] = useState(false)
-  const [openEdit, setOpenEdit] = useState(false)
-
-  const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [editActivity, setEditActivity] = useState<IActivity | null>(null)
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["activities"],
-    queryFn: () => {
-      const token = localStorage.getItem("token")
-      return Api.get("/activities", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    },
-  })
-
-  console.log(data)
-
-  // Menghitung total pendapatan keseluruhan
-  const activities = data?.data
-  const totalIncome = activities?.data.reduce(
-    (total: number, item: IActivity) => total + item.totalIncome,
-    0,
-  )
-
-  // Menghitung total durasi keseluruhan
-  const totalDuration = activities?.data.reduce(
-    (total: number, item: IActivity) => total + item.duration,
-    0,
-  )
-
-  const handleDeleteActivity = (id: string) => {
-    setDeleteId(id)
-    setOpenDelete(true)
-  }
-
-  const handleEditActivity = (activities: IActivity) => {
-    setEditActivity(activities)
-    setOpenEdit(true)
-  }
+const Table = (Props: IPropsTable) => {
+  const {
+    data,
+    handleDelete,
+    handleEdit,
+    openDelete,
+    openEdit,
+    totalIncome,
+    totalDuration,
+    deleteId,
+    editActivity,
+    setOpenDelete,
+    setOpenEdit,
+  } = Props
 
   return (
     <div className="overflow-x-auto bg-white rounded-xl">
@@ -65,18 +37,48 @@ const Table = () => {
             <th className="w-1/3 text-start px-2 py-2 sm:px-4 sm:py-2 border">
               Judul Kegiatan
             </th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Nama Proyek</th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Tanggal Mulai</th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Tanggal Berakhir</th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Waktu Mulai</th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Waktu Berakhir</th>
-            <th className="px-2 py-2 sm:px-4 sm:py-2 border">Durasi</th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Nama Proyek
+                <TiFilter />
+              </div>
+            </th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Tanggal Mulai
+                <TiFilter />
+              </div>
+            </th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Tanggal Akhir
+                <TiFilter />
+              </div>
+            </th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Waktu Mulai
+                <TiFilter />
+              </div>
+            </th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Waktu Akhir
+                <TiFilter />
+              </div>
+            </th>
+            <th className="px-2 py-2 sm:px-4 sm:py-2 border">
+              <div className="flex items-center gap-x-2 ml-4 md:text-xs lg:text-sm">
+                Durasi
+                <TiFilter />
+              </div>
+            </th>
             <th className="px-2 py-2 sm:px-4 sm:py-2 border">Aksi</th>
           </tr>
         </thead>
 
         <tbody>
-          {activities?.data.map((item: IActivity) => (
+          {data?.map((item: IActivity) => (
             <tr key={item.id} className="border font-light">
               <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
                 {item.activityTitle}
@@ -102,14 +104,14 @@ const Table = () => {
               <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
                 <div className="flex gap-x-2 items-center">
                   <button
-                    onClick={() => handleEditActivity(item)}
+                    onClick={() => handleEdit(item)}
                     className="cursor-pointer text-Blue border border-slate-300 p-1 rounded hover:bg-sky-100"
                   >
                     <CiEdit size={20} />
                   </button>
 
                   <button
-                    onClick={() => handleDeleteActivity(item.id)}
+                    onClick={() => handleDelete(item.id)}
                     className="cursor-pointer text-Red border border-slate-300 p-1 rounded hover:bg-red-100"
                   >
                     <MdDeleteOutline size={20} />

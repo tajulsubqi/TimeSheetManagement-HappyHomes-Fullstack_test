@@ -21,7 +21,6 @@ const useDeleteActivity = ({ setOpen, deleteId }: IDeleteActivity) => {
         showConfirmButton: false,
         timer: 1500,
       })
-      console.log("Delete", response.data)
     },
   })
 

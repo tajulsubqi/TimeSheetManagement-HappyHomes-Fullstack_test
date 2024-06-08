@@ -19,7 +19,7 @@ const useAddActivity = (setOpen: React.Dispatch<React.SetStateAction<boolean>>) 
 
   const mutation = useMutation({
     mutationFn: (newActivity: IAddActivity) => Api.post("/activity", newActivity),
-    onSuccess: (response) => {
+    onSuccess: () => {
       Swal.fire({
         icon: "success",
         title: "Kegiatan baru berhasil ditambahkan!",
@@ -28,7 +28,6 @@ const useAddActivity = (setOpen: React.Dispatch<React.SetStateAction<boolean>>) 
       })
       query.invalidateQueries()
       setOpen(false)
-      console.log("Activity created successfully", response.data)
     },
   })
 

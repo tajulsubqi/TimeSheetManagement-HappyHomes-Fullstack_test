@@ -1,30 +1,69 @@
 import Table from "@/components/Table"
 import SearchInput from "@/components/ui/SearchInput"
-import { useEffect, useState } from "react"
+import { IActivity } from "@/interface/IActivity"
+import { Api } from "@/libs/axiosInstance"
+import { formatToRupiah } from "@/utils/currencyFormatter"
+import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
 import { IoIosAddCircleOutline } from "react-icons/io"
 import { IoFilter } from "react-icons/io5"
 import ModalActivity from "./modal-activity/AddActivityModal"
-import { jwtDecode } from "jwt-decode"
-import { formatToRupiah } from "@/utils/currencyFormatter"
-
-interface IUser {
-  name: string
-  hourlyRate: number
-  id: string
-}
+import useUser from "@/hooks/useUser"
+import ProjectFilter from "./ui/ProjectFilter"
+import FilterProjectModal from "./modal-filter/FilterProjectModal"
 
 const Main = () => {
   const [open, setOpen] = useState(false)
+  const [openFilter, setOpenFilter] = useState(false)
   const handleOpen = () => setOpen(true)
+  const { user } = useUser()
 
-  const [user, setUser] = useState<IUser | null>(null)
-  useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
-      const decodedToken = jwtDecode<IUser>(token)
-      setUser(decodedToken)
-    }
-  }, [])
+  const [openDelete, setOpenDelete] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [editActivity, setEditActivity] = useState<IActivity | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const { data } = useQuery({
+    queryKey: ["activities"],
+    queryFn: async () => {
+      const response = await Api.get("/activities")
+      return response.data
+    },
+  })
+
+  // Menghitung total pendapatan keseluruhan
+  const activities = data?.data
+  const totalIncome = activities?.reduce(
+    (total: number, item: IActivity) => total + item.totalIncome,
+    0,
+  )
+
+  // Menghitung total durasi keseluruhan
+  const totalDuration = activities?.reduce(
+    (total: number, item: IActivity) => total + item.duration,
+    0,
+  )
+
+  const handleDeleteActivity = (id: string) => {
+    setDeleteId(id)
+    setOpenDelete(true)
+  }
+
+  const handleEditActivity = (activity: IActivity) => {
+    setEditActivity(activity)
+    setOpenEdit(true)
+  }
+
+  // Filter activities berdasarkan search query
+  const filteredActivities = !searchQuery
+    ? activities
+    : activities.filter(
+        (activity: IActivity) =>
+          activity.activityTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          activity.project?.projectName.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
 
   return (
     <section className="bg-white px-6 rounded-xl shadow h-full pb-20">
@@ -55,18 +94,38 @@ const Main = () => {
           </div>
 
           <div className="flex gap-x-3 items-center">
-            <SearchInput />
-            <div className="border border-slate-300 p-2 rounded-md">
+            <SearchInput onSearch={setSearchQuery} />
+
+            <button
+              onClick={() => setOpenFilter(true)}
+              className="border border-slate-300 p-2 rounded-md hover:bg-slate-100 duration-300"
+            >
               <IoFilter color="red" size={20} />
-            </div>
+            </button>
+
+            {/* <ProjectFilter /> */}
           </div>
         </div>
 
         <div className="mt-8">
-          <Table />
+          <Table
+            data={filteredActivities}
+            handleDelete={handleDeleteActivity}
+            handleEdit={handleEditActivity}
+            totalIncome={totalIncome}
+            totalDuration={totalDuration}
+            deleteId={deleteId}
+            editActivity={editActivity}
+            openDelete={openDelete}
+            openEdit={openEdit}
+            setOpenDelete={setOpenDelete}
+            setOpenEdit={setOpenEdit}
+          />
         </div>
       </div>
+
       <ModalActivity open={open} setOpen={setOpen} />
+      <FilterProjectModal open={openFilter} setOpen={setOpenFilter} />
     </section>
   )
 }
