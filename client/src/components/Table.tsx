@@ -32,6 +32,8 @@ const Table = () => {
     },
   })
 
+  console.log(data)
+
   // Menghitung total pendapatan keseluruhan
   const activities = data?.data
   const totalIncome = activities?.data.reduce(
@@ -80,7 +82,7 @@ const Table = () => {
                 {item.activityTitle}
               </td>
               <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                {item.projectName}
+                {item.project?.projectName}
               </td>
               <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
                 {formatDate(item.startDate)}

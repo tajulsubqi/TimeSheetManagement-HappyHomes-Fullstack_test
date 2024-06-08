@@ -1,6 +1,9 @@
 "use client"
+import { Api } from "@/libs/axiosInstance"
 import Box from "@mui/material/Box"
 import Modal from "@mui/material/Modal"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
 import Input from "../ui/Input"
 
 interface Props {
@@ -19,8 +22,42 @@ const style = {
   p: 3,
 }
 
+interface IProject {
+  projectName: string
+}
+
 const AddProjectModal = ({ open, setOpen }: Props) => {
+  const query = useQueryClient()
   const handleClose = () => setOpen(false)
+
+  const [formData, setFormData] = useState<IProject>({
+    projectName: "",
+  })
+
+  const addProject = useMutation({
+    mutationFn: (newProject: IProject) => {
+      const token = localStorage.getItem("token")
+      return Api.post("/project", newProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    },
+
+    onSuccess: (response) => {
+      query.invalidateQueries()
+      console.log("project", response.data)
+    },
+    onError: (error) => {
+      console.log("error", error)
+    },
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
+    e.preventDefault()
+    addProject.mutate(formData)
+    handleClose()
+  }
 
   return (
     <div>
@@ -37,7 +74,14 @@ const AddProjectModal = ({ open, setOpen }: Props) => {
             </h3>
 
             <div className="flex flex-col pt-7 pb-3">
-              <Input label="Nama Proyek" />
+              <Input
+                name="projectName"
+                onChange={(e) =>
+                  setFormData({ ...formData, projectName: e.target.value })
+                }
+                value={formData.projectName}
+                label="Nama Proyek"
+              />
             </div>
 
             <div className="flex items-center justify-end gap-x-2 border-t border-slate-300 mt-7">
@@ -46,8 +90,12 @@ const AddProjectModal = ({ open, setOpen }: Props) => {
                 className="border border-slate-300  flex items-center text-Red hover:bg-red-200 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
               >
                 Batal
-              </button>{" "}
-              <button className="bg-Red flex items-center text-white hover:bg-Red-600 hover:bg-red-600 duration-300 text-sm px-3 py-2 mt-7 rounded-md">
+              </button>
+
+              <button
+                onClick={handleSubmit}
+                className="bg-Red flex items-center text-white hover:bg-Red-600 hover:bg-red-600 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
+              >
                 Simpan
               </button>
             </div>

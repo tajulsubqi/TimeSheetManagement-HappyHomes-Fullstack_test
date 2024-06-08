@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 import { Api } from "@/libs/axiosInstance"
+import { SelectChangeEvent } from "@mui/material"
 
 interface Props {
   open: boolean
@@ -33,6 +34,10 @@ interface IActivity {
   startTime: string
   endTime: string
   activityTitle: string
+  projectId?: string
+  project: {
+    projectName: string
+  }
 }
 
 const EditActivityModal = ({ open, setOpen, editActivity }: Props) => {
@@ -76,6 +81,15 @@ const EditActivityModal = ({ open, setOpen, editActivity }: Props) => {
       setFormData({
         ...formData,
         [e.target.name]: e.target.value,
+      })
+    }
+  }
+
+  const handleChangeProject = (e: SelectChangeEvent<string>) => {
+    if (formData) {
+      setFormData({
+        ...formData,
+        projectId: e.target.value as string,
       })
     }
   }
@@ -140,7 +154,10 @@ const EditActivityModal = ({ open, setOpen, editActivity }: Props) => {
                 label="Judul Kegiatan"
               />
 
-              <SelectInput />
+              <SelectInput
+                onChange={handleChangeProject}
+                value={formData?.projectId || ""}
+              />
             </div>
 
             <div className="flex items-center justify-end gap-x-2 border-t border-slate-300 mt-7">

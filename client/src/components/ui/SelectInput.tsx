@@ -1,11 +1,14 @@
+import { SelectChangeEvent } from "@mui/material"
+import { useEffect, useState } from "react"
 import FormControl from "@mui/material/FormControl"
 import InputBase from "@mui/material/InputBase"
 import MenuItem from "@mui/material/MenuItem"
 import Select from "@mui/material/Select"
 import { styled } from "@mui/material/styles"
-import * as React from "react"
 import AddProjectModal from "../modal-project/AddProjectModal"
 import { IoMdAdd } from "react-icons/io"
+import { useQuery } from "@tanstack/react-query"
+import { Api } from "@/libs/axiosInstance"
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -27,19 +30,34 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }))
 
-const dummyProjects = [
-  { id: 1, name: "Project Alpha" },
-  { id: 2, name: "Project Beta" },
-  { id: 3, name: "Project Gamma" },
-]
+interface IProject {
+  projectName: string
+  id: string
+}
 
-const SelectInput = () => {
-  const [project, setProject] = React.useState("")
-  const [open, setOpen] = React.useState(false)
+interface SelectInputProps {
+  onChange: (e: SelectChangeEvent) => void
+  value: string
+  name?: string
+}
 
-  const handleChange = (event: { target: { value: string } }) => {
-    setProject(event.target.value)
-  }
+const SelectInput = ({ onChange, value, name }: SelectInputProps) => {
+  const [open, setOpen] = useState(false)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: () => {
+      const token = localStorage.getItem("token")
+      return Api.get("/projects", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+    },
+  })
+
+  const projectsData = data?.data
+  console.log(projectsData)
 
   return (
     <div>
@@ -50,14 +68,15 @@ const SelectInput = () => {
         <Select
           labelId="demo-customized-select-label"
           id="demo-customized-select"
-          value={project}
-          onChange={handleChange}
+          value={value}
+          onChange={onChange}
+          name={name}
           input={<BootstrapInput />}
         >
           <MenuItem value="">
             <button
               onClick={() => setOpen(true)}
-              className="w-full text-start text-red-500 text-sm"
+              className="w-full text-start text-red-500 text-sm cursor-pointer"
             >
               <div className="flex items-center gap-1">
                 <IoMdAdd />
@@ -65,9 +84,9 @@ const SelectInput = () => {
               </div>
             </button>
           </MenuItem>
-          {dummyProjects.map((proj) => (
-            <MenuItem key={proj.id} value={proj.id} sx={{ fontSize: 14 }}>
-              {proj.name}
+          {projectsData?.data.map((item: IProject) => (
+            <MenuItem key={item.id} value={item.id} sx={{ fontSize: 14 }}>
+              {item.projectName}
             </MenuItem>
           ))}
         </Select>

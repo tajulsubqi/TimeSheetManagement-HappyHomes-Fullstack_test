@@ -9,6 +9,7 @@ import Input from "../ui/Input"
 import SelectInput from "../ui/SelectInput"
 import { validateDateRange, validateTimeRange } from "@/utils/validation"
 import Swal from "sweetalert2"
+import { SelectChangeEvent } from "@mui/material"
 
 interface Props {
   open: boolean
@@ -44,7 +45,10 @@ const AddActivityModal = ({ open, setOpen }: Props) => {
     startTime: "",
     endTime: "",
     activityTitle: "",
+    projectId: "",
   })
+
+  console.log({ formData })
 
   const mutation = useMutation({
     mutationFn: (newActivity: IActivity) => {
@@ -73,9 +77,17 @@ const AddActivityModal = ({ open, setOpen }: Props) => {
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
+    })
+  }
+
+  const handleProjectChange = (e: SelectChangeEvent<string | any>) => {
+    setFormData({
+      ...formData,
+      projectId: e.target.value as string,
     })
   }
 
@@ -87,10 +99,10 @@ const AddActivityModal = ({ open, setOpen }: Props) => {
       return
     }
 
-    if (!validateTimeRange(formData.startTime, formData.endTime)) {
-      alert("Waktu Mulai tidak boleh lebih besar dari Waktu Berakhir")
-      return
-    }
+    // if (!validateTimeRange(formData.startTime, formData.endTime)) {
+    //   alert("Waktu Mulai tidak boleh lebih besar dari Waktu Berakhir")
+    //   return
+    // }
     mutation.mutate(formData)
   }
 
@@ -144,7 +156,7 @@ const AddActivityModal = ({ open, setOpen }: Props) => {
                 label="Judul Kegiatan"
               />
 
-              <SelectInput />
+              <SelectInput onChange={handleProjectChange} value={formData.projectId} />
             </div>
 
             <div className="flex items-center justify-end gap-x-2 border-t border-slate-300 mt-7">

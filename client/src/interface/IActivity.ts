@@ -8,4 +8,8 @@ export interface IActivity {
   projectName: string
   totalIncome: number
   duration: number
+  project: {
+    id: string
+    projectName: string
+  }
 }
