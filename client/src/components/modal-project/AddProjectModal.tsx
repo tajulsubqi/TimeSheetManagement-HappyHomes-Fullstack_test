@@ -1,15 +1,9 @@
 "use client"
-import { Api } from "@/libs/axiosInstance"
+import { PropsModalActivity } from "@/interface/IActivityModal"
 import Box from "@mui/material/Box"
 import Modal from "@mui/material/Modal"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
 import Input from "../ui/Input"
-
-interface Props {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+import useAddProject from "@/hooks/project/useAddProject"
 
 const style = {
   position: "absolute" as "absolute",
@@ -22,42 +16,8 @@ const style = {
   p: 3,
 }
 
-interface IProject {
-  projectName: string
-}
-
-const AddProjectModal = ({ open, setOpen }: Props) => {
-  const query = useQueryClient()
-  const handleClose = () => setOpen(false)
-
-  const [formData, setFormData] = useState<IProject>({
-    projectName: "",
-  })
-
-  const addProject = useMutation({
-    mutationFn: (newProject: IProject) => {
-      const token = localStorage.getItem("token")
-      return Api.post("/project", newProject, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    },
-
-    onSuccess: (response) => {
-      query.invalidateQueries()
-      console.log("project", response.data)
-    },
-    onError: (error) => {
-      console.log("error", error)
-    },
-  })
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
-    e.preventDefault()
-    addProject.mutate(formData)
-    handleClose()
-  }
+const AddProjectModal = ({ open, setOpen }: PropsModalActivity) => {
+  const { formData, setFormData, handleSubmit, handleClose } = useAddProject(setOpen)
 
   return (
     <div>

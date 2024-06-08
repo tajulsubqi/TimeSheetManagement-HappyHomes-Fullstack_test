@@ -1,9 +1,7 @@
 "use client"
-import { Api } from "@/libs/axiosInstance"
+import useDeleteActivity from "@/hooks/activity/useDeleteActivity"
 import Box from "@mui/material/Box"
 import Modal from "@mui/material/Modal"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import Swal from "sweetalert2"
 
 interface Props {
   open: boolean
@@ -23,35 +21,7 @@ const style = {
 }
 
 const DeleteActivityModal = ({ open, setOpen, deleteId }: Props) => {
-  const handleClose = () => setOpen(false)
-
-  const query = useQueryClient()
-  const deleteActivity = useMutation({
-    mutationFn: (deleteId: string | null) => {
-      const token = localStorage.getItem("token")
-      return Api.delete(`/activity/${deleteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    },
-
-    onSuccess: (response) => {
-      query.invalidateQueries()
-      Swal.fire({
-        icon: "success",
-        title: "Delete Activity Success!",
-        showConfirmButton: false,
-        timer: 1500,
-      })
-      console.log("Delete", response.data)
-    },
-  })
-
-  const handleDeleteActivity = () => {
-    deleteActivity.mutate(deleteId)
-    handleClose()
-  }
+  const { handleDeleteActivity, handleClose } = useDeleteActivity({ setOpen, deleteId })
 
   return (
     <div>

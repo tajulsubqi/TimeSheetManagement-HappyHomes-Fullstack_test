@@ -1,28 +1,11 @@
 "use client"
-import { Api } from "@/libs/axiosInstance"
+import useAddActivity from "@/hooks/activity/useAddActivity"
+import { PropsModalActivity } from "@/interface/IActivityModal"
 import Box from "@mui/material/Box"
 import Modal from "@mui/material/Modal"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
 import DateInput from "../ui/DateInput"
 import Input from "../ui/Input"
 import SelectInput from "../ui/SelectInput"
-import { validateDateRange, validateTimeRange } from "@/utils/validation"
-import Swal from "sweetalert2"
-import { SelectChangeEvent } from "@mui/material"
-
-interface Props {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-interface IActivity {
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  activityTitle: string
-}
 
 const style = {
   position: "absolute" as "absolute",
@@ -35,76 +18,11 @@ const style = {
   p: 3,
 }
 
-const AddActivityModal = ({ open, setOpen }: Props) => {
-  const query = useQueryClient()
+const AddActivityModal = ({ open, setOpen }: PropsModalActivity) => {
+  const { formData, handleChange, handleSubmit, handleProjectChange } =
+    useAddActivity(setOpen)
+
   const handleClose = () => setOpen(false)
-
-  const [formData, setFormData] = useState({
-    startDate: "",
-    endDate: "",
-    startTime: "",
-    endTime: "",
-    activityTitle: "",
-    projectId: "",
-  })
-
-  console.log({ formData })
-
-  const mutation = useMutation({
-    mutationFn: (newActivity: IActivity) => {
-      const token = localStorage.getItem("token")
-      return Api.post("/activity", newActivity, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    },
-    onSuccess: (response) => {
-      console.log("Activity created successfully", response.data)
-      Swal.fire({
-        icon: "success",
-        title: "Create Activity Success!",
-        showConfirmButton: false,
-        timer: 1500,
-      })
-      query.invalidateQueries()
-      setOpen(false)
-    },
-    onError: (error: any) => {
-      console.error("Error creating activity", error)
-      alert("Failed to create activity. " + (error.response?.data?.message || ""))
-    },
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-  }
-
-  const handleProjectChange = (e: SelectChangeEvent<string | any>) => {
-    setFormData({
-      ...formData,
-      projectId: e.target.value as string,
-    })
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (!validateDateRange(formData.startDate, formData.endDate)) {
-      alert("Tanggal Mulai tidak boleh lebih besar dari Tanggal Berakhir")
-      return
-    }
-
-    // if (!validateTimeRange(formData.startTime, formData.endTime)) {
-    //   alert("Waktu Mulai tidak boleh lebih besar dari Waktu Berakhir")
-    //   return
-    // }
-    mutation.mutate(formData)
-  }
 
   return (
     <div>

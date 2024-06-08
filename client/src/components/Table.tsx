@@ -2,7 +2,7 @@ import { useState } from "react"
 import { CiEdit } from "react-icons/ci"
 import { MdDeleteOutline } from "react-icons/md"
 import DeleteActivityModal from "./modal-activity/DeleteActivityModal"
-import EditActivityModal from "./modal-activity/EdtiActivityModal"
+import EditActivityModal from "./modal-activity/EditActivityModal"
 import { useQuery } from "@tanstack/react-query"
 import { Api } from "@/libs/axiosInstance"
 import {

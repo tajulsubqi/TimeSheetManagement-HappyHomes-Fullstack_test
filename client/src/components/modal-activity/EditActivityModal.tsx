@@ -1,20 +1,10 @@
 "use client"
+import useEditActivity from "@/hooks/activity/useEditActivity"
 import Box from "@mui/material/Box"
 import Modal from "@mui/material/Modal"
 import DateInput from "../ui/DateInput"
 import Input from "../ui/Input"
 import SelectInput from "../ui/SelectInput"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
-import Swal from "sweetalert2"
-import { Api } from "@/libs/axiosInstance"
-import { SelectChangeEvent } from "@mui/material"
-
-interface Props {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  editActivity: IActivity | null
-}
 
 const style = {
   position: "absolute" as "absolute",
@@ -27,80 +17,18 @@ const style = {
   p: 3,
 }
 
-interface IActivity {
-  id: string
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  activityTitle: string
-  projectId?: string
-  project: {
-    projectName: string
-  }
+interface EditActivityModalProps {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  editActivity: any
 }
 
-const EditActivityModal = ({ open, setOpen, editActivity }: Props) => {
-  const handleClose = () => setOpen(false)
-
-  const queryClient = useQueryClient()
-  const [formData, setFormData] = useState<IActivity | null>(null)
-
-  useEffect(() => {
-    if (editActivity) {
-      setFormData(editActivity)
-    }
-  }, [editActivity])
-
-  const updateActivity = useMutation({
-    mutationFn: (newActivity: IActivity) => {
-      const token = localStorage.getItem("token")
-      return Api.put(`/activity/${editActivity?.id}`, newActivity, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-    },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries()
-      Swal.fire({
-        icon: "success",
-        title: "Edit Activity Success!",
-        showConfirmButton: false,
-        timer: 1500,
-      })
-      console.log("Edit", response.data)
-    },
-    onError: (error: any) => {
-      console.log("Error", error)
-    },
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (formData) {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      })
-    }
-  }
-
-  const handleChangeProject = (e: SelectChangeEvent<string>) => {
-    if (formData) {
-      setFormData({
-        ...formData,
-        projectId: e.target.value as string,
-      })
-    }
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (formData) {
-      updateActivity.mutate(formData)
-      handleClose()
-    }
-  }
+const EditActivityModal = ({ open, setOpen, editActivity }: EditActivityModalProps) => {
+  const { formData, handleChange, handleSubmit, handleChangeProject, handleClose } =
+    useEditActivity({
+      setOpen,
+      editActivity,
+    })
 
   return (
     <div>
