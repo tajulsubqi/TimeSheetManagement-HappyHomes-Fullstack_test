@@ -1,26 +1,42 @@
-"use client"
 import Table from "@/components/Table"
 import SearchInput from "@/components/ui/SearchInput"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { IoIosAddCircleOutline } from "react-icons/io"
 import { IoFilter } from "react-icons/io5"
-import ModalActivity from "./Modal"
+import ModalActivity from "./modal-activity/AddActivityModal"
+import { jwtDecode } from "jwt-decode"
+import { formatToRupiah } from "@/utils/currencyFormatter"
+
+interface IUser {
+  name: string
+  hourlyRate: number
+  id: string
+}
 
 const Main = () => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
 
+  const [user, setUser] = useState<IUser | null>(null)
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      const decodedToken = jwtDecode<IUser>(token)
+      setUser(decodedToken)
+    }
+  }, [])
+
   return (
-    <section className="bg-white px-6 rounded-xl shadow h-[630px]">
+    <section className="bg-white px-6 rounded-xl shadow h-full pb-20">
       <div className="flex gap-x-16 border-b py-6">
         <div>
           <p className="text-xs">Nama Karyawan</p>
-          <p>Timothy Pradana</p>
+          <p>{user?.name}</p>
         </div>
 
         <div>
           <p className="text-xs">Rate</p>
-          <p>Rp 12.000/jam</p>
+          <p>{user ? formatToRupiah(user.hourlyRate) : formatToRupiah(0)}/jam</p>
         </div>
       </div>
 

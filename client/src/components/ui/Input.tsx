@@ -3,16 +3,18 @@ import React from "react"
 interface Props {
   label: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  name?: string
   value?: string
 }
 
-const Input = ({ label, onChange, value }: Props) => {
+const Input = ({ label, onChange, value, name }: Props) => {
   return (
     <div>
-      <label className="text-sm font-semibold text-slate-600" htmlFor="">
+      <label className="text-md font-semibold text-slate-600" htmlFor="">
         {label}
       </label>
       <input
+        name={name}
         onChange={onChange}
         value={value}
         type="text"

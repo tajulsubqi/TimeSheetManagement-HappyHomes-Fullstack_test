@@ -1,11 +1,9 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { LocalizationProvider } from "@mui/x-date-pickers"
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { Nunito } from "next/font/google"
 import Provider from "./Provider"
+import "./globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const font = Nunito({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={font.className}>
         <Provider>{children}</Provider>
       </body>
     </html>
