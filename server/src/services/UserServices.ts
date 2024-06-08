@@ -2,6 +2,10 @@ import { Repository } from "typeorm"
 import { UserEntity } from "../entity/User"
 import { AppDataSource } from "../data-source"
 import { Request, Response } from "express"
+import * as jwt from "jsonwebtoken"
+
+const dotenv = require("dotenv")
+dotenv.config()
 
 export default new (class UserServices {
   private readonly userRepository: Repository<UserEntity> =
@@ -17,28 +21,47 @@ export default new (class UserServices {
         })
       }
 
-      const user = new UserEntity()
-      user.name = name
-      user.hourlyRate = hourlyRate
+      const user = this.userRepository.create({
+        name,
+        hourlyRate,
+      })
+
+      const payload = {
+        id: user.id,
+        name: user.name,
+        hourlyRate: user.hourlyRate,
+      }
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET!)
 
       const savedUser = await this.userRepository.save(user)
       return res.status(201).json({
         message: "User created successfully",
         data: savedUser,
+        token,
       })
     } catch (error) {
       return res.status(500).json({ error: error.message })
     }
   }
 
-  //Find All
+  // Find All Users
   async findAllUser(req: Request, res: Response) {
     try {
       const users = await this.userRepository.find()
-      return res.status(200).json({
-        message: "Users retrieved successfully",
-        data: users,
+
+      // Generate token for each user
+      const usersWithToken = users.map((user) => {
+        const payload = {
+          id: user.id,
+          name: user.name,
+          hourlyRate: user.hourlyRate,
+        }
+        const token = jwt.sign(payload, process.env.JWT_SECRET!)
+        return { ...user, token }
       })
+
+      return res.status(200).json({ data: usersWithToken })
     } catch (error) {
       return res.status(500).json({ error: error.message })
     }

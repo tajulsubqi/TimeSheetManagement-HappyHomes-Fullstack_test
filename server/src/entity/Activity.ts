@@ -44,7 +44,7 @@ export class ActivityEntity {
 
   @ManyToOne(() => ProjectEntity, (project) => project.activities)
   @JoinColumn({ name: "project_id" })
-  proyek: ProjectEntity
+  project: ProjectEntity
 
   @ManyToOne(() => UserEntity, (user) => user.activities)
   @JoinColumn({ name: "user_id" })

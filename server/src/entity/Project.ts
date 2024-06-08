@@ -22,6 +22,6 @@ export class ProjectEntity {
   @UpdateDateColumn()
   updatedAt: Date
 
-  @OneToMany(() => ActivityEntity, (activity) => activity.proyek)
+  @OneToMany(() => ActivityEntity, (activity) => activity.project)
   activities: ActivityEntity[]
 }

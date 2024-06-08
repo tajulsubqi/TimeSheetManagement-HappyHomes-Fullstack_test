@@ -7,6 +7,9 @@ import { ProjectRouter } from "./routes/ProjectRoute"
 const cors = require("cors")
 const port = 5000
 const app = express()
+const dotenv = require("dotenv")
+
+dotenv.config()
 
 AppDataSource.initialize()
   .then(async () => {

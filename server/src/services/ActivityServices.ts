@@ -24,23 +24,25 @@ export default new (class ActivityServices {
       const startTimeDate = new Date(`${startDate} ${startTime}`)
       const endTimeDate = new Date(`${endDate} ${endTime}`)
 
-      const duration = (endTimeDate.getTime() - startTimeDate.getTime()) / (1000 * 60) // Durasi dalam menit
-
+      const duration = endTimeDate.getTime() - startTimeDate.getTime()
       if (duration < 0) {
         return res.status(400).json({ message: "Invalid time range" })
       }
 
-      const totalIncome = (duration / 60) * user.hourlyRate // Pendapatan total berdasarkan hourlyRate user
+      // Hitung Total Income
+      const totalIncome = (duration / (1000 * 60 * 60)) * user.hourlyRate // Durasi dalam jam
+      console.log(user.hourlyRate)
 
-      const activity = new ActivityEntity()
-      activity.activityTitle = activityTitle
-      activity.startDate = new Date(startDate)
-      activity.endDate = new Date(endDate)
-      activity.startTime = startTime
-      activity.endTime = endTime
-      activity.duration = duration
-      activity.totalIncome = totalIncome
-      activity.user = user // Set user relationship
+      const activity = this.activityRepository.create({
+        activityTitle,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        startTime,
+        endTime,
+        duration,
+        totalIncome,
+        user,
+      })
 
       const savedActivity = await this.activityRepository.save(activity)
       return res.status(201).json({
@@ -59,7 +61,7 @@ export default new (class ActivityServices {
   async findAllActivity(req: Request, res: Response) {
     try {
       const activities = await this.activityRepository.find({
-        relations: ["proyek", "user"],
+        relations: ["project", "user"],
       })
       return res.status(200).json({
         message: "Activities retrieved successfully",
@@ -79,7 +81,7 @@ export default new (class ActivityServices {
       const { id } = req.params
       const activity = await this.activityRepository.findOne({
         where: { id: Number(id) },
-        relations: ["proyek", "user"],
+        relations: ["project", "user"],
       })
       if (!activity) {
         return res.status(404).json({
@@ -104,7 +106,7 @@ export default new (class ActivityServices {
       const { id } = req.params
       const activity = await this.activityRepository.findOne({
         where: { id: Number(id) },
-        relations: ["proyek", "user"],
+        relations: ["project", "user"],
       })
       if (!activity) {
         return res.status(404).json({
@@ -130,7 +132,7 @@ export default new (class ActivityServices {
       const { activityTitle, startDate, endDate, startTime, endTime } = req.body
       const activity = await this.activityRepository.findOne({
         where: { id: Number(id) },
-        relations: ["proyek", "user"],
+        relations: ["project", "user"],
       })
       if (!activity) {
         return res.status(404).json({
