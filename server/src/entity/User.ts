@@ -17,7 +17,7 @@ export class UserEntity {
   name: string
 
   @Column()
-  hourlyRate: number // Rate per hour
+  hourlyRate: number 
 
   @CreateDateColumn()
   createdAt: Date

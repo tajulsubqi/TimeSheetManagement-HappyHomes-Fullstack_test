@@ -2,6 +2,10 @@ import { Request, Response } from "express"
 import ActivityServices from "../services/ActivityServices"
 
 export default new (class ActivityController {
+  ExportToCSV(req: Request, res: Response) {
+    ActivityServices.exportToCSV(req, res)
+  }
+
   AddActivity(req: Request, res: Response) {
     ActivityServices.createActivity(req, res)
   }
