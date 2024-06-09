@@ -1,60 +1,11 @@
 "use client"
-import React, { useState } from "react"
+import useSettingForm from "@/hooks/useSettingForm"
 import Input from "../ui/Input"
 import RateInput from "../ui/RateInput"
-import { useMutation } from "@tanstack/react-query"
-import { Api } from "@/libs/axiosInstance"
-import Swal from "sweetalert2"
-
-interface IUser {
-  name: string
-  hourlyRate: string
-}
 
 const Setting = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    hourlyRate: "",
-  })
-  const [isDisabled, setIsDisabled] = useState(false)
-
-  const mutation = useMutation({
-    mutationFn: (newUser: IUser) => Api.post("/user", newUser),
-    onSuccess: () => {
-      Swal.fire({
-        title: "Success",
-        text: "Karyawan berhasil ditambahkan!",
-        icon: "success",
-      })
-      setFormData({ name: "", hourlyRate: "" })
-      setIsDisabled(true)
-    },
-    onError: (error: any) => {
-      console.error("Error creating user", error)
-    },
-  })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
-    e.preventDefault()
-
-    if (!formData.name || !formData.hourlyRate) {
-      Swal.fire({
-        title: "Error",
-        text: "Nama dan rate harus diisi!",
-        icon: "error",
-      })
-      return
-    }
-
-    mutation.mutate(formData)
-  }
+  const { formData, handleChange, handleSubmit, isDisabled, setFormData } =
+    useSettingForm()
 
   return (
     <div className="w-full h-full mt-24 flex justify-center items-center">

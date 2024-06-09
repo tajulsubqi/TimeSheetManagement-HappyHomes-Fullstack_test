@@ -13,4 +13,3 @@ export interface IActivity {
     projectName: string
   }
 }
-

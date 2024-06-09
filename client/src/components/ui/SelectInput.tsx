@@ -57,7 +57,6 @@ const SelectInput = ({ onChange, value, name }: SelectInputProps) => {
   })
 
   const projectsData = data?.data
-  console.log(projectsData)
 
   return (
     <div>

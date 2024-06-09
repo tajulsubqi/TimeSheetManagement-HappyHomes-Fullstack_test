@@ -1,12 +1,14 @@
-"use client"
-import Box from "@mui/material/Box"
+import React from "react"
 import Modal from "@mui/material/Modal"
-import ProjectFilter from "../ui/ProjectFilter"
+import Box from "@mui/material/Box"
+import ProjectFilter from "./project-filter/ProjectFilter"
+import { IoClose } from "react-icons/io5"
 
-interface Props {
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+export interface IProject {
+  id: string
+  projectName: string
 }
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -18,43 +20,62 @@ const style = {
   p: 3,
 }
 
-const FilterProjectModal = ({ open, setOpen }: Props) => {
+interface Props {
+  open: boolean
+  setOpen: (open: boolean) => void
+  onProjectFilterChange: (projects: string[]) => void
+}
+
+const FilterProjectModal = ({ open, setOpen, onProjectFilterChange }: Props) => {
+  const [selectedProjects, setSelectedProjects] = React.useState<string[]>([])
+
+  const handleProjectChange = (projects: string[]) => {
+    setSelectedProjects(projects)
+    onProjectFilterChange(projects)
+  }
+
   const handleClose = () => setOpen(false)
 
+  const handleClearFilter = () => {
+    setSelectedProjects([])
+    onProjectFilterChange([])
+  }
+
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <div>
-            <h3 className="text-lg font-bold border-b border-slate-300 pb-6">Filter</h3>
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={style}>
+        <div className="flex justify-end">
+          <IoClose
+            onClick={handleClose}
+            color="red"
+            size={30}
+            className="cursor-pointer hover:bg-red-100 duration-300 p-1 rounded-full"
+          />
+        </div>
+        <h2 className="text-xl font-bold mb-4">Filter Proyek</h2>
+        <ProjectFilter
+          onProjectChange={handleProjectChange}
+          selectedProjects={selectedProjects}
+          onClearFilter={handleClearFilter}
+        />
 
-            <div className="flex gap-x-4 my-6">
-              <ProjectFilter />
-            </div>
+        <div className="flex items-center justify-end gap-x-2 border-t border-slate-300 mt-4">
+          <button
+            onClick={handleClearFilter}
+            className="border border-slate-300  flex items-center text-Red hover:bg-red-200 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
+          >
+            Hapus Filter
+          </button>
 
-            <div className="flex items-center justify-end gap-x-2 border-t border-slate-300 mt-4">
-              <button
-                onClick={handleClose}
-                className="border border-slate-300  flex items-center text-Red hover:bg-red-200 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
-              >
-                Hapus Filter
-              </button>{" "}
-              <button
-                // onClick={handleDeleteActivity}
-                className="bg-Red flex items-center text-white hover:bg-Red-600 hover:bg-red-600 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
-              >
-                Terapkan
-              </button>
-            </div>
-          </div>
-        </Box>
-      </Modal>
-    </div>
+          <button
+            onClick={handleClose}
+            className="bg-Red flex items-center text-white hover:bg-Red-600 hover:bg-red-600 duration-300 text-sm px-3 py-2 mt-7 rounded-md"
+          >
+            Terapkan
+          </button>
+        </div>
+      </Box>
+    </Modal>
   )
 }
 
