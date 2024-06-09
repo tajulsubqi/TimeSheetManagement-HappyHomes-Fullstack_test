@@ -15,15 +15,15 @@
     "express": "^4.19.2",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql": "^2.14.1",
     "nodemon": "^3.1.3",
+    "pg": "^8.12.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "0.3.20"
   },
   "scripts": {
     "start": "nodemon --exec ts-node src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate src/migration/MyMigration -d src/data-source.ts",
+    "migration:generate": "npx typeorm-ts-node-commonjs migration:generate src/migration/PGMigration -d src/data-source.ts",
     "migration:run": "npx typeorm-ts-node-commonjs migration:run -d src/data-source.ts"
   }
 }

@@ -2,20 +2,15 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 
 export const AppDataSource = new DataSource({
-  type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "root",
-  password: "",
-  database: "timesheet",
-  synchronize: true,
+  type: "postgres",
+  host: "monorail.proxy.rlwy.net",
+  port: 25114,
+  username: "postgres",
+  password: "OoNabkeECEAgiiOomFzTyjzSjpNGiGPn",
+  database: "railway",
+  synchronize: false,
   logging: false,
-  entities: ["src/entity/*.ts"],
-  migrations: ["src/migration/*.ts"],
+  entities: ["src/entity/**/*.ts"],
+  migrations: ["src/migration/**/*.ts"],
   subscribers: [],
-  ssl: {
-    ca: "/path/to/ca.pem",
-    cert: "/path/to/client-cert.pem",
-    key: "/path/to/client-key.pem",
-  },
 })
