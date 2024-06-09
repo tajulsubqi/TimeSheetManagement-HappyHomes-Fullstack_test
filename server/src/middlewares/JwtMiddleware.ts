@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express"
 import { AppDataSource } from "../data-source"
-import * as jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 import { UserEntity } from "../entity/User"
 
 const UserRepository = AppDataSource.getRepository(UserEntity)

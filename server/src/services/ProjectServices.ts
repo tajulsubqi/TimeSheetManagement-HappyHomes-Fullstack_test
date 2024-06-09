@@ -40,7 +40,7 @@ export default new (class ProjectServices {
         data: savedProject,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -53,7 +53,7 @@ export default new (class ProjectServices {
         data: projects,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -75,7 +75,7 @@ export default new (class ProjectServices {
         data: project,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -94,7 +94,7 @@ export default new (class ProjectServices {
         message: "Project deleted successfully",
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -137,7 +137,7 @@ export default new (class ProjectServices {
     } catch (error) {
       return res.status(500).json({
         message: "Update project failed",
-        error: error.message,
+        error: error,
       })
     }
   }

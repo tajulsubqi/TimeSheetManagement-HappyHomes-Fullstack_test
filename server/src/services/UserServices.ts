@@ -2,7 +2,7 @@ import { Repository } from "typeorm"
 import { UserEntity } from "../entity/User"
 import { AppDataSource } from "../data-source"
 import { Request, Response } from "express"
-import * as jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 
 const dotenv = require("dotenv")
 dotenv.config()
@@ -41,7 +41,7 @@ export default new (class UserServices {
         token,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -63,7 +63,7 @@ export default new (class UserServices {
 
       return res.status(200).json({ data: usersWithToken })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -82,7 +82,7 @@ export default new (class UserServices {
         data: user,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -102,7 +102,7 @@ export default new (class UserServices {
         message: "User deleted successfully",
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 
@@ -127,7 +127,7 @@ export default new (class UserServices {
         data: updatedUser,
       })
     } catch (error) {
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ error: error })
     }
   }
 })()
