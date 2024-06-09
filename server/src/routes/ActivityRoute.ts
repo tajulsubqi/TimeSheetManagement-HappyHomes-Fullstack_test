@@ -3,7 +3,7 @@ import ActivityController from "../controllers/ActivityControllers"
 import { verifyToken } from "../middlewares/JwtMiddleware"
 
 export const ActivityRouter = express.Router()
-ActivityRouter.get("/export", ActivityController.ExportToCSV)
+ActivityRouter.get("/export/csv", ActivityController.ExportToCSV)
 ActivityRouter.post("/activity", verifyToken, ActivityController.AddActivity)
 ActivityRouter.get("/activities", verifyToken, ActivityController.GetAllActivity)
 ActivityRouter.get("/activity/:id", verifyToken, ActivityController.GetById)
