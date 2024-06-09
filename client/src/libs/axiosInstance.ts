@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const Api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: "https://tht-server-production.up.railway.app/api/v1",
 })
 
 // Menambahkan interceptors untuk menambahkan token ke setiap permintaan

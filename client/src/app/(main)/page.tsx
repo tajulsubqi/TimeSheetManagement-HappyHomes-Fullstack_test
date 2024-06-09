@@ -24,12 +24,15 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/export/csv", {
-          responseType: "blob",
-          headers: {
-            "Content-Type": "text/csv",
+        const response = await axios.get(
+          "https://tht-server-production.up.railway.app/api/v1/export/csv",
+          {
+            responseType: "blob",
+            headers: {
+              "Content-Type": "text/csv",
+            },
           },
-        })
+        )
 
         const reader = new FileReader()
         reader.onload = () => {
