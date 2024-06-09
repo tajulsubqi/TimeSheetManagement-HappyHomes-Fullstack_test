@@ -9,9 +9,6 @@ import "dotenv/config"
 const cors = require("cors")
 const port = process.env.PORT || 5000
 const app = express()
-const dotenv = require("dotenv")
-
-dotenv.config()
 
 AppDataSource.initialize()
   .then(async () => {
