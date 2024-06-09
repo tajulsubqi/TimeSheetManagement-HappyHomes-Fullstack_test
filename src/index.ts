@@ -3,9 +3,11 @@ import { AppDataSource } from "./data-source"
 import { UserRouter } from "./routes/UserRoute"
 import { ActivityRouter } from "./routes/ActivityRoute"
 import { ProjectRouter } from "./routes/ProjectRoute"
+import "reflect-metadata"
+import "dotenv/config"
 
 const cors = require("cors")
-const port = 5000
+const port = process.env.PORT || 5000
 const app = express()
 const dotenv = require("dotenv")
 

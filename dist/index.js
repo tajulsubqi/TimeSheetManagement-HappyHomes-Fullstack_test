@@ -17,6 +17,7 @@ const data_source_1 = require("./data-source");
 const UserRoute_1 = require("./routes/UserRoute");
 const ActivityRoute_1 = require("./routes/ActivityRoute");
 const ProjectRoute_1 = require("./routes/ProjectRoute");
+require("reflect-metadata");
 const cors = require("cors");
 const port = 5000;
 const app = (0, express_1.default)();
