@@ -1,6 +1,6 @@
 import { Api } from "@/libs/axiosInstance"
 import { useMutation } from "@tanstack/react-query"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Swal from "sweetalert2"
 
 interface ISettingForm {
@@ -14,6 +14,18 @@ const useSettingForm = () => {
     hourlyRate: "",
   })
   const [isDisabled, setIsDisabled] = useState(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      setIsDisabled(true)
+      Swal.fire({
+        title: "Oops..",
+        text: "Karyawan sudah terdaftar, tidak dapat menambahkan lagi!",
+        icon: "warning",
+      })
+    }
+  }, [])
 
   const mutation = useMutation({
     mutationFn: async (newUser: ISettingForm) => {
