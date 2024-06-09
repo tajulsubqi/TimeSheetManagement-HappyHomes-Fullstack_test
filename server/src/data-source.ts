@@ -13,5 +13,9 @@ export const AppDataSource = new DataSource({
   entities: ["src/entity/*.ts"],
   migrations: ["src/migration/*.ts"],
   subscribers: [],
-  ssl: true,
+  ssl: {
+    ca: "/path/to/ca.pem",
+    cert: "/path/to/client-cert.pem",
+    key: "/path/to/client-key.pem",
+  },
 })
