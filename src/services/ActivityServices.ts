@@ -46,7 +46,7 @@ export default new (class ActivityServices {
     } catch (error) {
       return res.status(500).json({
         message: "Failed to export activities to CSV",
-        error: error.message,
+        error: error,
       })
     }
   }
@@ -97,7 +97,7 @@ export default new (class ActivityServices {
       })
     } catch (error) {
       return res.status(500).json({
-        error: error.message,
+        error: error,
         message: "Failed to create activity",
       })
     }
@@ -115,7 +115,7 @@ export default new (class ActivityServices {
       })
     } catch (error) {
       return res.status(500).json({
-        error: error.message,
+        error: error,
         message: "Failed to retrieve activities",
       })
     }
@@ -140,7 +140,7 @@ export default new (class ActivityServices {
       })
     } catch (error) {
       return res.status(500).json({
-        error: error.message,
+        error: error,
         message: "Failed to retrieve activity",
       })
     }
@@ -165,7 +165,7 @@ export default new (class ActivityServices {
       })
     } catch (error) {
       return res.status(500).json({
-        error: error.message,
+        error: error,
         message: "Failed to delete activity",
       })
     }
@@ -213,7 +213,7 @@ export default new (class ActivityServices {
       })
     } catch (error) {
       return res.status(500).json({
-        error: error.message,
+        error: error,
         message: "Failed to update activity",
       })
     }
