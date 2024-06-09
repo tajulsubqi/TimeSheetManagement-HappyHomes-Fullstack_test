@@ -1,4 +1,3 @@
-"use client"
 import { Api } from "@/libs/axiosInstance"
 import { useMutation } from "@tanstack/react-query"
 import React, { useState } from "react"
@@ -17,7 +16,12 @@ const useSettingForm = () => {
   const [isDisabled, setIsDisabled] = useState(false)
 
   const mutation = useMutation({
-    mutationFn: (newUser: ISettingForm) => Api.post("/user", newUser),
+    mutationFn: async (newUser: ISettingForm) => {
+      const response = await Api.post("/user", newUser, {})
+      const { token } = response.data
+      localStorage.setItem("token", token)
+      return response
+    },
     onSuccess: () => {
       Swal.fire({
         title: "Success",
@@ -59,7 +63,7 @@ const useSettingForm = () => {
     handleChange,
     handleSubmit,
     isDisabled,
-    setFormData
+    setFormData,
   }
 }
 

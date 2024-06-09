@@ -2,7 +2,6 @@
 import Box from "@mui/material/Box"
 import Tab from "@mui/material/Tab"
 import Tabs from "@mui/material/Tabs"
-
 import Header from "@/components/Header"
 import Main from "@/components/Main"
 import { TabPanels } from "@/components/TabPanels"
@@ -12,17 +11,20 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import Papa from "papaparse"
 import { CSVLink } from "react-csv"
-import { IPropsTabelCsv } from "@/interface/IDataCsv"
 import Swal from "sweetalert2"
+import { IPropsTabelCsv } from "@/interface/IDataCsv"
+import { formatMsToDuration } from "@/utils/timeConversion"
 
 export default function Home() {
   const { value, handleChange, a11yProps } = useTabPanels()
   const [dataCsv, setDataCsv] = useState<IPropsTabelCsv[]>([])
+  const [totalIncome, setTotalIncome] = useState<number>(0)
+  const [totalDuration, setTotalDuration] = useState<number>(0)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/export", {
+        const response = await axios.get("http://localhost:5000/api/v1/export/csv", {
           responseType: "blob",
           headers: {
             "Content-Type": "text/csv",
@@ -31,31 +33,81 @@ export default function Home() {
 
         const reader = new FileReader()
         reader.onload = () => {
-          console.log("Reader Result:", reader.result)
           Papa.parse(reader.result as string, {
             header: true,
             complete: (results) => {
-              console.log("Parsed Data:", results.data)
               setDataCsv(results.data as IPropsTabelCsv[])
+              calculateTotalIncomeAndDuration(results.data as IPropsTabelCsv[])
             },
-            error: (error: Error) => {},
+            error: (error: Error) => {
+              console.log("Error parsing CSV:", error)
+            },
           })
         }
         reader.readAsText(response.data)
-      } catch (err) {}
+      } catch (err) {
+        console.log("Error fetching CSV:", err)
+      }
     }
 
     fetchData()
   }, [])
 
   const handleDownload = () => {
+    if (!localStorage.getItem("token")) {
+      Swal.fire({
+        icon: "error",
+        title: "Export Laporan CSV Gagal!",
+        text: "Anda harus daftar terlebih dahulu untuk melakukan ekspor CSV.",
+      })
+      return
+    }
+
+    if (dataCsv.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Export Laporan CSV Gagal!",
+        text: "Tidak ada data yang tersedia untuk diekspor.",
+      })
+      return
+    }
+
     Swal.fire({
       icon: "success",
-      title: "File CSV berhasil diunduh",
+      title: "Export Laporan CSV Berhasil!",
       showConfirmButton: false,
       timer: 1500,
     })
   }
+
+  const calculateTotalIncomeAndDuration = (data: IPropsTabelCsv[]) => {
+    let totalIncome = 0
+    let totalDuration = 0
+    data.forEach((activity) => {
+      totalIncome += parseFloat(activity.totalIncome)
+      totalDuration += parseFloat(activity.duration)
+    })
+    setTotalIncome(totalIncome)
+    setTotalDuration(totalDuration)
+  }
+
+  // Menambahkan baris untuk total durasi dan total pendapatan
+  const dataWithTotals = [
+    ...dataCsv,
+    {
+      id: "",
+      activityTitle: "Total",
+      startDate: "",
+      endDate: "",
+      startTime: "",
+      endTime: "",
+      duration: formatMsToDuration(totalDuration),
+      project: "",
+      totalDuration: totalDuration,
+      totalIncome: totalIncome,
+    },
+  ]
+
   return (
     <>
       <Header />
@@ -72,19 +124,7 @@ export default function Home() {
           </div>
 
           <CSVLink
-            data={dataCsv}
-            headers={[
-              { label: "ID", key: "id" },
-              { label: "Activity Title", key: "activityTitle" },
-              { label: "Start Date", key: "startDate" },
-              { label: "End Date", key: "endDate" },
-              { label: "Start Time", key: "startTime" },
-              { label: "End Time", key: "endTime" },
-              { label: "Duration", key: "duration" },
-              { label: "Total Income", key: "totalIncome" },
-              { label: "User", key: "user" },
-              { label: "Project", key: "project" },
-            ]}
+            data={dataWithTotals}
             filename="activities.csv"
             onClick={handleDownload}
             className="bg-red-500 hover:bg-red-600 duration-300 px-4 py-3 font-semibold text-white rounded-lg text-sm "

@@ -1,22 +1,18 @@
 "use client"
+import { IPropsTabelCsv } from "@/interface/IDataCsv"
+import { formatToRupiah } from "@/utils/currencyFormatter"
+import { formatMsToDuration } from "@/utils/timeConversion"
 import axios from "axios"
+import Papa from "papaparse"
 import { useEffect, useState } from "react"
 import { CSVLink } from "react-csv"
-import Papa from "papaparse"
-
-interface IPropsTabelCsv {
-  activityTitle: string
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  duration: string
-  project: string
-}
 
 const TabelCsv = () => {
   const [data, setData] = useState<IPropsTabelCsv[]>([])
   const [loading, setLoading] = useState(true)
+  const [totalIncome, setTotalIncome] = useState<number>(0)
+  const [totalDuration, setTotalDuration] = useState<number>(0)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,17 +26,17 @@ const TabelCsv = () => {
 
         const reader = new FileReader()
         reader.onload = () => {
-          console.log("Reader Result:", reader.result)
           Papa.parse(reader.result as string, {
             header: true,
             complete: (results) => {
-              console.log("Parsed Data:", results.data)
               setData(results.data as IPropsTabelCsv[])
               setLoading(false)
+              calculateTotalIncomeAndDuration(results.data as IPropsTabelCsv[])
             },
             error: (error: Error) => {
               console.log("Error:", error)
               setLoading(false)
+              setError("Error parsing CSV data")
             },
           })
         }
@@ -48,13 +44,43 @@ const TabelCsv = () => {
       } catch (err) {
         console.log("Error:", err)
         setLoading(false)
+        setError("Error fetching CSV data")
       }
     }
 
     fetchData()
   }, [])
 
+  const calculateTotalIncomeAndDuration = (data: IPropsTabelCsv[]) => {
+    let totalIncome = 0
+    let totalDuration = 0
+    data.forEach((activity) => {
+      totalIncome += parseFloat(activity.totalIncome)
+      totalDuration += parseFloat(activity.duration)
+    })
+    setTotalIncome(totalIncome)
+    setTotalDuration(totalDuration)
+  }
+
   if (loading) return <p>Loading...</p>
+  if (error) return <p>{error}</p>
+
+  // Menambahkan baris untuk total durasi dan total pendapatan
+  const dataWithTotals = [
+    ...data,
+    {
+      id: "",
+      activityTitle: "Total",
+      startDate: "",
+      endDate: "",
+      startTime: "",
+      endTime: "",
+      duration: formatMsToDuration(totalDuration),
+      project: "",
+      totalDuration: totalDuration,
+      totalIncome: totalIncome,
+    },
+  ]
 
   return (
     <section className="bg-white px-6 rounded-xl shadow h-full pb-20">
@@ -85,29 +111,29 @@ const TabelCsv = () => {
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((activity, index) => (
-                <tr key={index} className="border font-light">
+            {dataWithTotals.length > 0 ? (
+              dataWithTotals.map((item) => (
+                <tr key={item.id} className="border font-light">
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.activityTitle}
+                    {item.activityTitle}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.project}
+                    {item.project}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.startDate}
+                    {item.startDate}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.endDate}
+                    {item.endDate}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.startTime}
+                    {item.startTime}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.endTime}
+                    {item.endTime}
                   </td>
                   <td className="px-2 py-2 text-sm text-slate-700 sm:px-4 sm:py-2 border">
-                    {activity.duration}
+                    {item.duration}
                   </td>
                 </tr>
               ))
@@ -127,21 +153,22 @@ const TabelCsv = () => {
             <p className="font-semibold text-[16px]">Total Pendapatan</p>
           </div>
           <div className="flex flex-col gap-y-2">
-            <p className="font-light">total durasi</p>
-            <p className="font-semibold text-[17px]">total pendapatan</p>
+            <p className="font-light">{formatMsToDuration(totalDuration)}</p>
+            <p className="font-semibold text-[17px]">{formatToRupiah(totalIncome)}</p>
           </div>
         </div>
 
         <CSVLink
-          data={data}
+          data={dataWithTotals}
           headers={[
-            { label: "ID", key: "id" },
+            { label: "Id", key: "id" },
             { label: "Activity Title", key: "activityTitle" },
             { label: "Start Date", key: "startDate" },
             { label: "End Date", key: "endDate" },
             { label: "Start Time", key: "startTime" },
             { label: "End Time", key: "endTime" },
             { label: "Duration", key: "duration" },
+            { label: "Total Duration", key: "totalDuration" },
             { label: "Total Income", key: "totalIncome" },
             { label: "User", key: "user" },
             { label: "Project", key: "project" },

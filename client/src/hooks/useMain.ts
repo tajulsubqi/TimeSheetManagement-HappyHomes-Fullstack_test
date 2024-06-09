@@ -61,7 +61,6 @@ const useMain = () => {
   })
 
   return {
-    open,
     openFilter,
     setOpenFilter,
     handleProjectFilterChange,

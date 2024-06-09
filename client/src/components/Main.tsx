@@ -8,9 +8,19 @@ import FilterProjectModal from "./modal-filter/FilterProjectModal"
 import useUser from "@/hooks/useUser"
 import useMain from "@/hooks/useMain"
 import { useState } from "react"
+import Swal from "sweetalert2"
 
 const Main = () => {
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    if (!localStorage.getItem("token")) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Anda harus nambah karyawan terlebih dahulu di pengaturan!",
+      })
+    }
+    setOpen(true)
+  }
   const [open, setOpen] = useState(false)
 
   const { user } = useUser()
@@ -45,7 +55,6 @@ const Main = () => {
           <p>{user ? formatToRupiah(user.hourlyRate) : formatToRupiah(0)}/jam</p>
         </div>
       </div>
-
       <div className="py-7 font-semibold">
         <div className="flex justify-between items-center gap-x-5">
           <div className="flex gap-x-5 items-center">
@@ -88,9 +97,8 @@ const Main = () => {
           />
         </div>
       </div>
-
-      <ModalActivity open={open} setOpen={setOpen} />
-
+      <ModalActivity open={open && !!localStorage.getItem("token")} setOpen={setOpen} />{" "}
+      {/* Kondisi untuk membuka modal hanya jika token tersedia */}
       <FilterProjectModal
         open={openFilter}
         setOpen={setOpenFilter}
