@@ -1,7 +1,8 @@
 "use client"
 import { ThemeProvider, createTheme } from "@mui/material"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import React from "react"
+import { LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 
 const theme = createTheme({
   components: {
@@ -21,7 +22,9 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </div>
   )

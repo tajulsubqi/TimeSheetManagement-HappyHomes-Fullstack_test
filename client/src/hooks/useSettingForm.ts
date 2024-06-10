@@ -29,7 +29,7 @@ const useSettingForm = () => {
 
   const mutation = useMutation({
     mutationFn: async (newUser: ISettingForm) => {
-      const response = await Api.post("/user", newUser, {})
+      const response = await Api.post("/user", newUser)
       const { token } = response.data
       localStorage.setItem("token", token)
       return response

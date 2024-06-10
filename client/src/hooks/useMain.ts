@@ -24,16 +24,14 @@ const useMain = () => {
 
   // Menghitung total pendapatan keseluruhan
   const activities = data?.data
-  const totalIncome = activities?.reduce(
-    (total: number, item: IActivity) => total + item.totalIncome,
-    0,
-  )
+  const totalIncome = Array.isArray(activities)
+    ? activities.reduce((total: number, item: IActivity) => total + item.totalIncome, 0)
+    : 0
 
   // Menghitung total durasi keseluruhan
-  const totalDuration = activities?.reduce(
-    (total: number, item: IActivity) => total + item.duration,
-    0,
-  )
+  const totalDuration = Array.isArray(activities)
+    ? activities.reduce((total: number, item: IActivity) => total + item.duration, 0)
+    : 0
 
   const handleDeleteActivity = (id: string) => {
     setDeleteId(id)
