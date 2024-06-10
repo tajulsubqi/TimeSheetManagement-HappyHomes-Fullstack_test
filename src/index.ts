@@ -7,7 +7,7 @@ import "reflect-metadata"
 import "dotenv/config"
 
 const cors = require("cors")
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 6000
 const app = express()
 
 AppDataSource.initialize()
