@@ -106,9 +106,7 @@ export default new (class ActivityServices {
   // Find all activities
   async findAllActivity(req: Request, res: Response) {
     try {
-      const user = res.locals.user
       const activities = await this.activityRepository.find({
-        where: { user: { id: user.id } },
         relations: ["project", "user"],
       })
       return res.status(200).json({

@@ -37,8 +37,7 @@ export default new (class UserServices {
       const savedUser = await this.userRepository.save(user)
       return res.status(201).json({
         message: "User created successfully",
-        data: savedUser,
-        token,
+        data: { savedUser, token },
       })
     } catch (error) {
       return res.status(500).json({ error: error })

@@ -1,120 +1,47 @@
-# Happy Homes API
+![Logo](https://media.licdn.com/dms/image/C4E0BAQHvqUY859a1gQ/company-logo_200_200/0/1669273464983?e=1726099200&v=beta&t=D2cp8aEhngTmTGo647vdXhQVFiZwKxbFIzIDC1yh02Y)
 
-## Overview
+# PT Happy Homes
 
-PT. Happy Homes take home test API
+## Project Description
 
-## Table of Contents
+The Happy Homes application allows the addition of employees who have a varied hourly rate based on the activities and projects carried out.
 
-1. [Installation](#installation)
-2. [Usage](#usage)
-3. [Documentation](#documentation)
+## Features
 
-## Installation
+The Happy Homes application has features to add employees, add activities, add projects, delete activities, and export files in CSV format.
 
-```bash
-git clone https://github.com/tajulsubqi/TimeSheetManagement-HappyHomes-Fullstack_test.git
-cd server
-npm install
-```
+## Tech Stack
 
-## Usage
+1. **Frontend**
 
-```bash
-npm start
-```
+- NextJS, Axios, TanstackQuery, TailwindCSS, Material UI, React Hook Form
 
-## Documentation
+2. **Backend**
 
-### Base URL
+- ExpressJS, TypeORM, JsonWebToken, PostgreSQL
 
-localhost
+You can see a demo of this project at [https://timesheetmanagement.app/](https://timesheetmanagement.vercel.app/).
 
-### GET Endpoint
+## Screenshots
 
-#### 1. /api/v1/users
+<table>
+  <tr>
+    <td><img src="./client/public/screenshots/ss1.png" alt="App Screenshot" width="100%"></td>
+    <td><img src="./client/public/screenshots/ss2.png" alt="App Screenshot" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="./client/public/screenshots/ss4.png" alt="App Screenshot" width="100%"></td>
+    <td><img src="./client/public/screenshots/ss3.png" alt="App Screenshot" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="./client/public/screenshots/ss5.png" alt="App Screenshot" width="100%"></td>
+  </tr>
+</table>
 
-Used to get User profile information (Require Authorization token)
+## Feedback
 
-#### 2. /api/v1/activities
+If you have any feedback, please reach out to us at [subqitajul7@gmail.com](mailto:subqitajul7@gmail.com)
 
-Used to get a list of activities (No Authorization token required)
+## Authors
 
-#### 3. /api/v1/projects
-
-Used to get a list of projects (Require Authorization token)
-
-### POST Endpoint
-
-#### 1. /api/v1/user
-
-request body :
-
-```bash
-{
-  "name": "John Doe",
-  "hourlyRate": 25000
-}
-```
-
-#### 2. /api/v1/activity
-
-Used to top up the balance of the User (Require Authorization token)
-
-request body :
-
-```bash
-{
- {
-  "activityTitle": "Design Meeting",
-  "startDate": "2023-06-08",
-  "endDate": "2023-06-08",
-  "startTime": "10:00",
-  "endTime": "11:00",
-  "userId": 1,
-  "projectId": 1
-}
-}
-```
-
-#### 4. /api/v1/project
-
-Used to carry out transactions from available services (Require Authorization token)
-
-request body :
-
-```bash
-{
-    "projectName" : "UI/UX Design",
-}
-```
-
-### PUT Endpoint
-
-#### 1. /api/activity/:id
-
-Used to update User profile data (Require Authorization token)
-
-request body :
-
-```bash
-{
-  "activityTitle": "Design Meeting update",
-  "startDate": "2023-06-08",
-  "endDate": "2023-06-08",
-  "startTime": "10:00",
-  "endTime": "11:00",
-  "userId": 1,
-  "projectId": 1
-}
-```
-
-#### 2. /api/project/:id
-
-Used to update / upload User profile image (Require Authorization token)
-
-```bash
-{
-    "projectName" : "UI/UX Design update",
-}
-```
+- [Tajul Subqi](https://github.com/tajulsubqi)
