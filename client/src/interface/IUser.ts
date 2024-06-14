@@ -1,5 +1,9 @@
 export interface IUser {
+  id: string
   name: string
   hourlyRate: number
-  id: string
+}
+
+export interface UserState {
+  user: IUser | null
 }

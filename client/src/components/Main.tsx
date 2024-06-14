@@ -1,7 +1,7 @@
 import Table from "@/components/table/Table"
 import SearchInput from "@/components/ui/SearchInput"
 import useMain from "@/hooks/useMain"
-import useUser from "@/hooks/useUser"
+import { useAppSelector } from "@/libs/hooks"
 import { formatToRupiah } from "@/utils/currencyFormatter"
 import { useState } from "react"
 import { IoIosAddCircleOutline } from "react-icons/io"
@@ -24,7 +24,9 @@ const Main = () => {
   }
   const [open, setOpen] = useState(false)
 
-  const { user } = useUser()
+  const { user } = useAppSelector((state) => state.user)
+  console.log(user)
+
   const {
     openFilter,
     setOpenFilter,

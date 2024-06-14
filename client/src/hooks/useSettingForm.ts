@@ -1,4 +1,6 @@
+import { login } from "@/features/user/userSlice"
 import { Api } from "@/libs/axiosInstance"
+import { useAppDispatch } from "@/libs/hooks"
 import { useMutation } from "@tanstack/react-query"
 import React, { useState, useEffect } from "react"
 import Swal from "sweetalert2"
@@ -9,6 +11,8 @@ interface ISettingForm {
 }
 
 const useSettingForm = () => {
+  const dispatch = useAppDispatch()
+
   const [formData, setFormData] = useState({
     name: "",
     hourlyRate: "",
@@ -66,6 +70,12 @@ const useSettingForm = () => {
       })
       return
     }
+
+    const user = {
+      name: formData.name,
+      hourlyRate: formData.hourlyRate,
+    }
+    dispatch(login(user))
 
     mutation.mutate(formData)
   }
