@@ -1,7 +1,7 @@
 import Table from "@/components/table/Table"
 import SearchInput from "@/components/ui/SearchInput"
 import useMain from "@/hooks/useMain"
-import { useAppSelector } from "@/libs/hooks"
+import useUser from "@/hooks/useUser"
 import { formatToRupiah } from "@/utils/currencyFormatter"
 import { useState } from "react"
 import { IoIosAddCircleOutline } from "react-icons/io"
@@ -10,6 +10,9 @@ import { TbUserX } from "react-icons/tb"
 import Swal from "sweetalert2"
 import ModalActivity from "./modal-activity/AddActivityModal"
 import FilterProjectModal from "./modal-filter/FilterProjectModal"
+import { useMutation } from "@tanstack/react-query"
+import { Api } from "@/libs/axiosInstance"
+import { useAppSelector } from "@/libs/hooks"
 
 const Main = () => {
   const handleOpen = () => {
@@ -23,9 +26,7 @@ const Main = () => {
     setOpen(true)
   }
   const [open, setOpen] = useState(false)
-
-  const { user } = useAppSelector((state) => state.user)
-  console.log(user)
+  const { user } = useUser()
 
   const {
     openFilter,
@@ -44,6 +45,10 @@ const Main = () => {
     handleDeleteActivity,
     handleEditActivity,
   } = useMain()
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (deleteId: string | null) => Api.delete(`/user/${deleteId}`),
+  })
 
   const deleteUser = () => {
     Swal.fire({

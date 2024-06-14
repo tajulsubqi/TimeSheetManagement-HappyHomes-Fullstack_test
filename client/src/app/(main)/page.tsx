@@ -1,19 +1,19 @@
 "use client"
-import Box from "@mui/material/Box"
-import Tab from "@mui/material/Tab"
-import Tabs from "@mui/material/Tabs"
 import Header from "@/components/Header"
 import Main from "@/components/Main"
 import { TabPanels } from "@/components/TabPanels"
 import Setting from "@/components/setting/Setting"
 import useTabPanels from "@/hooks/useTabPanels"
-import { useEffect, useState } from "react"
-import axios from "axios"
+import { IPropsTabelCsv } from "@/interface/IDataCsv"
+import { Api } from "@/libs/axiosInstance"
+import { formatMsToDuration } from "@/utils/timeConversion"
+import Box from "@mui/material/Box"
+import Tab from "@mui/material/Tab"
+import Tabs from "@mui/material/Tabs"
 import Papa from "papaparse"
+import { useEffect, useState } from "react"
 import { CSVLink } from "react-csv"
 import Swal from "sweetalert2"
-import { IPropsTabelCsv } from "@/interface/IDataCsv"
-import { formatMsToDuration } from "@/utils/timeConversion"
 
 export default function Home() {
   const { value, handleChange, a11yProps } = useTabPanels()
@@ -24,15 +24,12 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://tht-server-production.up.railway.app/api/v1/export/csv",
-          {
-            responseType: "blob",
-            headers: {
-              "Content-Type": "text/csv",
-            },
+        const response = await Api.get("/export/csv", {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "text/csv",
           },
-        )
+        })
 
         const reader = new FileReader()
         reader.onload = () => {
@@ -63,7 +60,7 @@ export default function Home() {
         title: "Export Laporan CSV Gagal!",
         text: "Anda harus daftar terlebih dahulu untuk melakukan ekspor CSV.",
       })
-      return
+      return false
     }
 
     if (dataCsv.length === 0) {
@@ -72,7 +69,7 @@ export default function Home() {
         title: "Export Laporan CSV Gagal!",
         text: "Tidak ada data yang tersedia untuk diekspor.",
       })
-      return
+      return false
     }
 
     Swal.fire({
@@ -81,6 +78,7 @@ export default function Home() {
       showConfirmButton: false,
       timer: 1500,
     })
+    return true
   }
 
   const calculateTotalIncomeAndDuration = (data: IPropsTabelCsv[]) => {
@@ -94,7 +92,6 @@ export default function Home() {
     setTotalDuration(totalDuration)
   }
 
-  // Menambahkan baris untuk total durasi dan total pendapatan
   const dataWithTotals = [
     ...dataCsv,
     {
